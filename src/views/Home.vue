@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <RaffleBlock msg="抽奖系统主页" prizesList=""/>
+    <RaffleBlock msg="抽奖系统主页" prizesList="" />
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import RaffleBlock from '@/components/RaffleBlock.vue'
 export default {
   name: 'Home',
   components: {
-    RaffleBlock
-  }
+    RaffleBlock,
+  },
 }
 </script>

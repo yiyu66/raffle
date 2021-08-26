@@ -1,33 +1,43 @@
 <template>
   <div class="home">
-    <!-- <h1>{{ msg }}</h1> -->
-    <!-- <h1>{{ prizesList }}</h1> -->
-    <!-- <ul>
-        <li
-          :ref="`item${val.order}`"
-          :data-index="val.order"
-          :class="val.order >= 1 ? 'rw' : ''"
-          v-for="val in resultList"
-          :key="val.prize_id"
-        >
-        <li :data-index="val.order" v-for="val in resultList" :key="val.order">
-          <div v-if="val.order !== -9">
-            <div class="name">{{ val.name }}</div>
-          </div>
-          <div v-else class="start" @click.stop.prevent="startGo"></div>
-        </li>
-      </ul> -->
-    <div>
-      <p style="font-size: 3em; color: blue; margin: 30px">用户余额:{{ UserBanace }}</p>
-    </div>
+    <div class="prize-text">幸运抽奖</div>
+    <div class="money">当前金币值：{{ UserBanace }}</div>
     <div class="container">
+      <div class="upper-border">
+        <div class="circle corner"></div>
+        <div class="circle hollow"></div>
+        <div class="circle center"></div>
+        <div class="circle hollow"></div>
+        <div class="circle corner"></div>
+      </div>
+      <div class="lower-border">
+        <div class="circle corner"></div>
+        <div class="circle hollow"></div>
+        <div class="circle center"></div>
+        <div class="circle hollow"></div>
+        <div class="circle corner"></div>
+      </div>
+      <div class="left-border">
+        <div class="circle corner"></div>
+        <div class="circle hollow"></div>
+        <div class="circle center"></div>
+        <div class="circle hollow"></div>
+        <div class="circle corner"></div>
+      </div>
+      <div class="right-border">
+        <div class="circle corner"></div>
+        <div class="circle hollow"></div>
+        <div class="circle center"></div>
+        <div class="circle hollow"></div>
+        <div class="circle corner"></div>
+      </div>
       <div class="box" id="box0">{{ resultList[0].name }}</div>
       <div class="box" id="box1">{{ resultList[1].name }}</div>
       <div class="box" id="box2">{{ resultList[2].name }}</div>
       <div class="box" id="box7">{{ resultList[7].name }}</div>
       <div class="start" id="boxcenter">
-        <el-button type="primary" id="startButton" @click="start" round>
-          <p>开始抽奖</p>
+        <el-button class="startButton" id="startButton" @click="start" round>
+          <p>抽奖</p>
           <p>10/次</p></el-button
         >
       </div>
@@ -108,14 +118,14 @@ export default {
     this.getRaffleList()
   },
   methods: {
-    
     async start() {
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
       this.index = 0
       this.UserBanace -= 10
       document.getElementById('startButton').disabled = true
       await this.getRaffleRes()
-      if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) { // 考虑网络断开的情况
+      if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) {
+        // 考虑网络断开的情况
         this.IntervalID = setInterval(this.rotate, this.stepDelay)
         console.log(this.raffle.winNum)
       } else {
@@ -141,6 +151,7 @@ export default {
         clearInterval(this.IntervalID)
         this.index = 0
         document.getElementById('startButton').disabled = false
+        
         // alert('恭喜你中奖了！') // UI待修改
       } else {
         // 逐渐减速
@@ -188,21 +199,23 @@ export default {
 <style scoped>
 .home {
   display: flex;
+  flex-direction: column;
   /* align-content: center; */
-  align-items: center; /* 垂直居中 */
-  justify-content: center;
-  background-color: #ccffff;
-  margin: 0%;
+  align-items: center;
+  /* justify-content: center; */
+  background-color: rgb(27, 118, 209);
 }
 .container {
   display: flex;
-  width: 700px;
-  height: 700px;
+  width: 660px;
+  height: 660px;
+  background-color: orange;
   flex-wrap: wrap;
   align-content: center;
   justify-content: center;
-  border: 5px solid #6699cc;
-  border-radius: 8%;
+  border: 50px solid #ffe6a6;
+  border-radius: 15%;
+  margin: 30px;
 }
 .container > .start {
   display: flex;
@@ -212,7 +225,7 @@ export default {
   margin: 0%;
   width: 180px;
   height: 180px;
-  border: 10px solid rgb(112, 176, 250);
+  /* border: 10px solid rgb(112, 176, 250); */
   background-color: rgb(255, 255, 255);
   text-align: center;
   line-height: 50px;
@@ -223,11 +236,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 15%;
-  margin: 0%;
+  border-radius: 30px;
+  /* margin: 0%; */
+  /* margin: 5.33px; */
   width: 180px;
   height: 180px;
-  border: 10px solid rgb(112, 176, 250);
+  /* border: 10px solid rgb(112, 176, 250); */
   background-color: rgb(255, 255, 255);
   text-align: center;
   line-height: 50px;
@@ -235,14 +249,14 @@ export default {
   margin-top: 15px;
 }
 .box:hover {
-  border: 10px solid red;
+  /* border: 10px solid red; */
+  box-shadow: inset 0 0 16px #ffa800;
   z-index: 9999;
 }
 .start:hover {
-  border: 10px solid rgb(233, 186, 58);
+  /* border: 10px solid rgb(233, 186, 58); */
   z-index: 9999;
 }
-
 .boxActived {
   display: flex;
   align-items: center;
@@ -251,11 +265,91 @@ export default {
   margin: 0%;
   width: 180px;
   height: 180px;
-  border: 10px solid rgb(238, 85, 131);
-  background-color: rgb(255, 255, 255);
   text-align: center;
   line-height: 50px;
   margin-right: 15px;
   margin-top: 15px;
+  background-color: #ffa800;
+  box-shadow: inset 0 0 16px #ffe6a6;
+}
+.startButton {
+  width: 180px;
+  height: 180px;
+  background-color: #ffe6a6;
+  box-shadow: inset 0 0 16px #ffa800;
+  align-items: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: #a74b00;
+  cursor: pointer;
+}
+.prize-text {
+  color: rgb(230, 232, 217);
+  border-radius: 5px;
+  margin-top: 100px;
+  font-size: 50px;
+}
+.money {
+  margin-top: 20px;
+  padding-left: 10px;
+  font-size: 30px;
+  color: rgb(230, 232, 217);
+}
+.upper-border,
+.lower-border,
+.left-border,
+.right-border {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+}
+.upper-border {
+  transform: translateY(-50px);
+  margin-left: -25px;
+  flex-direction: row;
+  height: 12px;
+  width: 550px;
+}
+.lower-border {
+  transform: translateY(660px);
+  margin-left: -25px;
+  flex-direction: row;
+  height: 12px;
+  width: 550px;
+}
+
+.left-border {
+  transform: translateX(-365px);
+  margin-top: 50px;
+  flex-direction: column;
+  height: 550px;
+  width: 12px;
+}
+.right-border {
+  transform: translateX(345px);
+  margin-top: 50px;
+  flex-direction: column;
+  height: 550px;
+  width: 12px;
+}
+.circle {
+  border-radius: 50%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+.corner {
+  background-color: #e37815;
+}
+.hollow {
+  transform: translate(100%px);
+  background-color: transparent;
+  border: solid white 2px;
+}
+.center {
+  background-color: white;
 }
 </style>
