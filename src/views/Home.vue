@@ -1,18 +1,17 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <RaffleBlock msg="抽奖系统主页" prizesList=""/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import RaffleBlock from '@/components/RaffleBlock.vue'
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    RaffleBlock
   }
 }
 </script>
