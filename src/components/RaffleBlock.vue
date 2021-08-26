@@ -31,20 +31,36 @@
         <div class="circle hollow"></div>
         <div class="circle corner"></div>
       </div>
-      <div class="box" id="box0">{{ resultList[0].name }}</div>
-      <div class="box" id="box1">{{ resultList[1].name }}</div>
-      <div class="box" id="box2">{{ resultList[2].name }}</div>
-      <div class="box" id="box7">{{ resultList[7].name }}</div>
+      <div class="box" id="box0">
+        <img src="./img/ak47-asiimov.jpg" />{{ resultList[0].name }}
+      </div>
+      <div class="box" id="box1">
+        <img src="./img/awp-dragon.jpeg" />{{ resultList[1].name }}
+      </div>
+      <div class="box" id="box2">
+        <img src="./img/m4a4-howl.jpeg" />{{ resultList[2].name }}
+      </div>
+      <div class="box" id="box7">
+        <img src="./img/nothing.jpeg" />{{ resultList[7].name }}
+      </div>
       <div class="start" id="boxcenter">
         <el-button class="startButton" id="startButton" @click="start" round>
           <p>抽奖</p>
           <p>10/次</p></el-button
         >
       </div>
-      <div class="box" id="box3">{{ resultList[3].name }}</div>
-      <div class="box" id="box6">{{ resultList[6].name }}</div>
-      <div class="box" id="box5">{{ resultList[5].name }}</div>
-      <div class="box" id="box4">{{ resultList[4].name }}</div>
+      <div class="box" id="box3">
+        <img src="./img/nothing.jpeg" />{{ resultList[3].name }}
+      </div>
+      <div class="box" id="box6">
+        <img src="./img/pandora-gloves.jpeg" />{{ resultList[6].name }}
+      </div>
+      <div class="box" id="box5">
+        <img src="./img/m9-doppler.jpeg" />{{ resultList[5].name }}
+      </div>
+      <div class="box" id="box4">
+        <img src="./img/fracture-case.jpeg" />{{ resultList[4].name }}
+      </div>
     </div>
   </div>
 </template>
@@ -82,7 +98,7 @@ export default {
           probability: 40,
         },
         {
-          name: "给你点个赞",
+          name: "棱彩武器箱",
           order: 5,
           probability: 40,
         },
@@ -97,7 +113,7 @@ export default {
           probability: 0.01,
         },
         {
-          name: "棱彩武器箱",
+          name: "给你点个赞",
           order: 8,
           probability: 19.8,
         },
@@ -237,6 +253,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   border-radius: 30px;
   /* margin: 0%; */
   /* margin: 5.33px; */
@@ -352,5 +369,9 @@ export default {
 }
 .center {
   background-color: white;
+}
+img {
+  width: 80%;
+  height: 60%;
 }
 </style>
