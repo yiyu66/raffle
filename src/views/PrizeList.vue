@@ -7,7 +7,6 @@
     </el-breadcrumb>
     <el-card class="box-card">
       <!-- 搜索与添加区域 -->
-
       <el-row :gutter="20">
         <el-col :span="9">
           <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getPrizeList">
@@ -23,8 +22,8 @@
         <el-table-column type="index" label="#"> </el-table-column>
         <el-table-column prop="name" label="奖品名称"> </el-table-column>
         <el-table-column prop="prizeimage" label="奖品图片"> </el-table-column>
+        <el-table-column prop="probability" label="中奖概率(%)"> </el-table-column>
         <el-table-column prop="mg_state" label="选择(最多8个)">
-          <!-- 最多选8个 -->
           <template v-slot="scope">
             <el-switch v-model="scope.row.mg_state" @change="userStateChange(scope.row)"> </el-switch>
           </template>
@@ -36,7 +35,7 @@
               type="danger"
               icon="el-icon-delete"
               size="mini"
-              @click="removeUserById(scope.row.id)"
+              @click="removeUserById(scope.row.name)"
             ></el-button>
           </template>
         </el-table-column>
@@ -55,13 +54,15 @@
     </el-card>
     <!-- 添加奖品的对话框 -->
     <el-dialog title="添加奖品" :visible.sync="addDialogVisible" width="30%" @close="addDiadlogClosed">
-      <!-- 内容主体 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
-        <el-form-item label="奖品名称" prop="username">
-          <el-input v-model="addForm.username"></el-input>
+      <el-form :model="addForm" ref="addFormRef" label-width="70px">
+        <el-form-item label="奖品名称" prop="name">
+          <el-input v-model="addForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="奖品图片" prop="password">
-          <el-input v-model="addForm.password"></el-input>
+        <el-form-item label="中奖概率(%)" prop="probability">
+          <el-input v-model="addForm.probability"></el-input>
+        </el-form-item>
+        <el-form-item label="奖品图片" prop="image">
+          <el-input v-model="addForm.image"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -90,16 +91,16 @@ export default {
       selectedPrizeId: '', // 已选中的id
       // 添加表单数据
       addForm: {},
-      addFormRules: {
-        username: [
-          {
-            required: true,
-            message: '请输入奖品名称',
-            trigger: 'blur',
-          },
-        ],
-        password: [{ required: true, message: '请输入奖品图片', trigger: 'blur' }],
-      },
+      // addFormRules: {
+      //   username: [
+      //     {
+      //       required: true,
+      //       message: '请输入奖品名称',
+      //       trigger: 'blur',
+      //     },
+      //   ],
+      //   password: [{ required: true, message: '请输入奖品图片', trigger: 'blur' }],
+      // },
       // 查询奖品数据
       editForm: {},
     }
@@ -111,7 +112,7 @@ export default {
     // 更新奖品列表
     async getPrizeList() {
       const res = await axios({
-        url: 'http://localhost:3000/PrizeList',
+        url: '/PrizeList',
         method: 'get',
         responseType: 'json',
       })
@@ -122,7 +123,7 @@ export default {
           console.log('获取奖品列表失败')
         })
       this.PrizeList = res
-      console.log(this.PrizeList);
+      // console.log(this.PrizeList)
     },
     // 翻页功能函数
     handleSizeChange(newpageSize) {
@@ -136,7 +137,7 @@ export default {
     // 更新奖品状态，后台接口待添加
     async userStateChange() {
       const res = await axios({
-        url: 'http://localhost:3000/updatePrizeState',
+        url: '/updatePrizeState',
         method: 'post',
         responseType: 'json',
         data: {
@@ -155,55 +156,53 @@ export default {
     addDiadlogClosed() {
       this.$refs.addFormRef.resetFields()
     },
-    // 添加奖品 --- 这里不需要验证表单了，后续可以删掉
-    addprize() {
-      this.$refs.addFormRef.validate(async (valid) => {
-        if (!valid) return
-        const res = await axios({
-          url: 'http://localhost:3000/PrizeList',
-          method: 'get',
-          responseType: 'json',
-        })
-          .then(function (response) {
-            return response.data
-          })
-          .catch(function (error) {
-            return this.$message.erro('添加奖品失败')
-          })
+    // 添加奖品
+    async addprize() {
+      const formObj = JSON.stringify(this.addForm)
+      const res = await axios({
+        url: '/addprize',
+        method: 'post',
+        responseType: 'json',
+        data: {
+          formObj,
+        },
       })
+        .then(function (response) {
+          return response
+        })
+        .catch(function (error) {
+          return error
+        })
+      console.log(res.data)
       this.addDialogVisible = false
       this.getPrizeList()
     },
     // 删除奖品
     async removeUserById(id) {
-      const deleteRes = await this.$confirm('永久删除该奖品, 是否继续?', '提示', {
+      const deleteRes = await this.$confirm('永久删除该商品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-      })
-        .then(() => {
-          console.log(deleteRes)
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除',
-          })
-        })
+      }).catch((err) => err)
 
-      const res = await axios({
-        url: 'http://localhost:3000/deletePrize',
-        method: 'delete',
-        responseType: 'json',
-        data: {},
-      })
-        .then(function (response) {
-          this.$message.success('删除成功')
-          return response.data
+      if (deleteRes !== 'confirm') {
+        this.$message.info('已经取消删除')
+      } else {
+        const res = await axios({
+          url: '/deletePrize',
+          method: 'delete',
+          responseType: 'json',
+          data: { id },
         })
-        .catch(function (error) {
-          return this.$message.erro('删除奖品失败')
-        })
+          .then(function (response) {
+            return response
+          })
+          .catch(function (error) {
+            return error
+          })
+        console.log(res.data)
+      }
+
       this.getPrizeList()
     },
   },

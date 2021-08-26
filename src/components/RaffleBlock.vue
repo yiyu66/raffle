@@ -108,7 +108,7 @@ export default {
     this.getRaffleList()
   },
   methods: {
-    // 要考虑一个网络断开的情况、点击开始抽奖的时候禁用box
+    // 要考虑一个网络断开的情况
     start() {
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
       this.index = 0
@@ -144,7 +144,7 @@ export default {
     },
     async getRaffleRes() {
       const res = await axios({
-        url: 'http://localhost:3000/PrizeResult',
+        url: '/PrizeResult',
         method: 'get',
         responseType: 'json',
       })
@@ -160,7 +160,7 @@ export default {
     },
     async getRaffleList() {
       const res = await axios({
-        url: 'http://localhost:3000/RaffleList',
+        url: '/RaffleList',
         method: 'get',
         responseType: 'json',
       })
