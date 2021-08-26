@@ -161,6 +161,7 @@ export default {
       IntervalID: '',
       UserBanace: 200, // 存款，默认200
       isTurn: true, // 是否可以抽奖，后续加上余额判断
+      allPrizes: document.getElementById("prize-image")
     }
   },
   created() {
@@ -169,6 +170,7 @@ export default {
   methods: {
     // 要考虑一个网络断开的情况、点击开始抽奖的时候禁用box
     start() {
+      console.log(this.allPrizes);
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
       this.index = 0
       this.UserBanace -= 10
@@ -240,7 +242,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .home {
+  position: absolute;
   background-color: rgb(27, 118, 209);
+  width: 100%;
+  height: 100%;
 }
 
 .prize-text, .money, .wheel-container {
