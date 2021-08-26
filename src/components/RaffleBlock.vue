@@ -94,7 +94,7 @@ export default {
       ],
       // 后端返回的抽奖结果
       raffle: {
-        winNum: 0,
+        winNum: -1,
       },
       index: 0, //当前转动到哪个位置，起点位置
       stepDelay: 100, //初始转动速度 0.1s一步
@@ -108,14 +108,21 @@ export default {
     this.getRaffleList()
   },
   methods: {
-    // 要考虑一个网络断开的情况
-    start() {
+    
+    async start() {
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
       this.index = 0
       this.UserBanace -= 10
       document.getElementById('startButton').disabled = true
-      this.getRaffleRes()
-      this.IntervalID = setInterval(this.rotate, this.stepDelay)
+      await this.getRaffleRes()
+      if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) { // 考虑网络断开的情况
+        this.IntervalID = setInterval(this.rotate, this.stepDelay)
+        console.log(this.raffle.winNum)
+      } else {
+        document.getElementById('startButton').disabled = false
+        this.UserBanace += 10
+        alert('错误')
+      }
     },
     rotate() {
       // 复原老格子style
@@ -152,9 +159,8 @@ export default {
           return response.data.Num
         })
         .catch(function (error) {
-          console.log(error)
+          return error
         })
-      console.log('后台返回的抽奖结果是' + res)
       this.raffle.winNum = res
       this.stepNum = 40 + this.raffle.winNum
     },
