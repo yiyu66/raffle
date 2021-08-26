@@ -1,5 +1,4 @@
 allPrizes = document.getElementsByClassName("prize");
-document.get
 pointerIndex = -1;
 clockwisePrizes = [allPrizes[0], allPrizes[3], allPrizes[5], allPrizes[6], allPrizes[7], allPrizes[4], allPrizes[2], allPrizes[1]]
 

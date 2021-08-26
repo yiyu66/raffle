@@ -17,24 +17,83 @@
           <div v-else class="start" @click.stop.prevent="startGo"></div>
         </li>
       </ul> -->
-    <div>
-      <p style="font-size: 3em; color: blue; margin: 30px">用户余额:{{ UserBanace }}</p>
+    <div class="prize-text">
+        幸运抽奖
     </div>
-    <div class="container">
-      <div class="box" id="box0">{{ resultList[0].name }}</div>
-      <div class="box" id="box1">{{ resultList[1].name }}</div>
-      <div class="box" id="box2">{{ resultList[2].name }}</div>
-      <div class="box" id="box7">{{ resultList[7].name }}</div>
-      <div class="start" id="boxcenter">
-        <el-button type="primary" id="startButton" @click="start" round>
-          <p>开始抽奖</p>
-          <p>10/次</p></el-button
-        >
-      </div>
-      <div class="box" id="box3">{{ resultList[3].name }}</div>
-      <div class="box" id="box6">{{ resultList[6].name }}</div>
-      <div class="box" id="box5">{{ resultList[5].name }}</div>
-      <div class="box" id="box4">{{ resultList[4].name }}</div>
+    <div class="money">
+        当前金币值：∞
+    </div>
+    <div class="wheel-container" style="width: 500px; height:500px">
+        <div class="upper-border">
+            <div class="circle corner"></div>
+            <div class="circle hollow"></div>
+            <div class="circle center"></div>
+            <div class="circle hollow"></div>
+            <div class="circle corner"></div>
+        </div>
+        <div class="lower-border">
+            <div class="circle corner"></div>
+            <div class="circle hollow"></div>
+            <div class="circle center"></div>
+            <div class="circle hollow"></div>
+            <div class="circle corner"></div>
+        </div>
+        <div class="left-border">
+            <div class="circle corner"></div>
+            <div class="circle hollow"></div>
+            <div class="circle center"></div>
+            <div class="circle hollow"></div>
+            <div class="circle corner"></div>
+        </div>
+        <div class="right-border">
+            <div class="circle corner"></div>
+            <div class="circle hollow"></div>
+            <div class="circle center"></div>
+            <div class="circle hollow"></div>
+            <div class="circle corner"></div>
+        </div>
+        <div class="prize-container">
+            <div class="prize">
+                <img src="./img/ak47-asiimov.jpg" class="image">
+                <p>AK47 | 二西莫夫</p>
+            </div>
+            <div class="prize">
+                <img src="./img/awp-dragon.jpeg" class="image">
+                <p>AWP | 巨龙传说</p>
+            </div>
+            <div class="prize">
+                <img src="./img/m4a4-howl.jpeg" class="image">
+                <p>M4A4 | 咆哮</p>
+            </div>
+            <div class="prize">
+                <img src="./img/nothing.jpeg" class="image">
+                <p>给你点个赞</p>
+            </div>
+            <div class="lottery">
+                <p>抽奖</p>
+            </div>
+            <div class="prize">
+                <img src="./img/nothing.jpeg" class="image">
+                <p>给你点个赞</p>
+            </div>
+            <div class="prize">
+                <img src="./img/m9-doppler.jpeg" class="image">
+                <p>M9刺刀 | 多普勒</p>
+            </div>
+            <div class="prize">
+                <img src="./img/pandora-gloves.jpeg" class="image">
+                <p>运动手套 | 潘多拉魔盒</p>
+            </div>
+            <div class="prize">
+                <img src="./img/fracture-case.jpeg" class="image">
+                <p>棱彩武器箱</p>
+            </div>
+        </div>
+        <div class="prize-window">
+            <p>恭喜你，你获得了</p>
+            <img id="prize-image" src="">
+            <p id="prize-content"></p>
+        </div>
     </div>
   </div>
 </template>
@@ -181,75 +240,184 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .home {
-  display: flex;
-  /* align-content: center; */
-  align-items: center; /* 垂直居中 */
-  justify-content: center;
-  background-color: #ccffff;
-  margin: 0%;
-}
-.container {
-  display: flex;
-  width: 700px;
-  height: 700px;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  border: 5px solid #6699cc;
-  border-radius: 8%;
-}
-.container > .start {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 15%;
-  margin: 0%;
-  width: 180px;
-  height: 180px;
-  border: 10px solid rgb(112, 176, 250);
-  background-color: rgb(255, 255, 255);
-  text-align: center;
-  line-height: 50px;
-  margin-right: 15px;
-  margin-top: 15px;
-}
-.box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 15%;
-  margin: 0%;
-  width: 180px;
-  height: 180px;
-  border: 10px solid rgb(112, 176, 250);
-  background-color: rgb(255, 255, 255);
-  text-align: center;
-  line-height: 50px;
-  margin-right: 15px;
-  margin-top: 15px;
-}
-.box:hover {
-  border: 10px solid red;
-  z-index: 9999;
-}
-.start:hover {
-  border: 10px solid rgb(233, 186, 58);
-  z-index: 9999;
+  background-color: rgb(27, 118, 209);
 }
 
-.boxActived {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 15%;
-  margin: 0%;
-  width: 180px;
-  height: 180px;
-  border: 10px solid rgb(238, 85, 131);
-  background-color: rgb(255, 255, 255);
-  text-align: center;
-  line-height: 50px;
-  margin-right: 15px;
-  margin-top: 15px;
+.prize-text, .money, .wheel-container {
+    margin-left: 500px;
+    color: rgb(230, 232, 217);
+}
+
+.prize-text::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    background-color: orange;
+    border-radius: 5px;
+}
+
+.prize-text {
+    margin-top: 100px;
+    font-size: 30px;
+}
+
+.money {
+    margin-top: 20px;
+    padding-left: 10px;
+    font-size: 20px;
+}
+
+.wheel-container {
+    margin-top: 50px;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    background-color: #fadd95;
+    box-shadow: inset 0 0 16px orange;
+}
+
+.upper-border, .lower-border, .left-border, .right-border {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-around;
+}
+
+.upper-border, .lower-border {
+    margin-left: -25px;
+    flex-direction: row;
+    height: 12px;
+    width: 550px;
+}
+
+.left-border, .right-border {
+    margin-top: -30px;
+    flex-direction: column;
+    height: 550px;
+    width: 12px;
+}
+
+.upper-border {
+    margin-top: 5px;
+}
+
+.lower-border {
+    margin-top: 445px;
+}
+
+.left-border {
+    margin-left: 15px;
+}
+
+.right-border {
+    margin-left: 455px;
+}
+
+.circle {
+    border-radius: 50%;
+    box-sizing: border-box;
+    margin-top: 10px;
+    display: block;
+    width: 30px;
+    height: 30px;
+}
+
+.corner {
+    background-color: #e37815;
+}
+
+.hollow {
+    transform: translate(100%px);
+    background-color: transparent;
+    border: solid white 2px;
+}
+
+.center {
+    background-color: white;
+}
+
+.prize-container, .prize-window, .prize-window.show {
+    position: absolute;
+    margin: 50px;
+    width: 400px;
+    height: 400px;
+    border-radius: 30px;
+    background-color: orange;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: space-between;
+}
+
+.prize, .lottery {
+    margin: 5.33px;
+    border-radius: 30px;
+    background-color: white;
+    width: 30%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.lottery {
+    background-color: #ffe6a6;
+    box-shadow: inset 0 0 16px #ffa800;
+}
+
+.image {
+    width: 80%;
+    height: 60%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.prize p, .prize-window p {
+    color: #d25f00;
+    font-size: 10px;
+    align-items: center;
+}
+
+.lottery p {
+    align-items: center;
+    font-weight: bold;
+    font-size: large;
+    color: #a74b00;
+    cursor: pointer;
+}
+
+.prize.chosen {
+    background-color: #ffa800;
+    box-shadow: inset 0 0 16px #ffe6a6;
+}
+
+.prize-window {
+    background-color: white;
+    display: none;
+}
+
+.prize-window.show {
+    background-color: white;
+    display: block;
+    text-align: center;
+}
+
+.prize-window p {
+    font-size: 30px;
+}
+
+#prize-content  {
+    font-weight: bold;
+}
+
+#prize-image {
+    margin-left: auto;
+    margin-right: auto;
+    width: 120px;
+    height:120px;
 }
 </style>
