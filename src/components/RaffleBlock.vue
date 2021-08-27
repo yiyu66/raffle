@@ -63,6 +63,7 @@
       </div>
     </div>
     <div class="prize-window" id="prize-window">
+      <button id="exit" @click="restore">X</button>
       <img src="./img/rich.png" style="width: 300px; height: 300px" />
       <p id="congrats-text">恭喜你，你获得了</p>
       <p id="final-prize-text"></p>
@@ -130,7 +131,7 @@ export default {
       },
       index: 0, //当前转动到哪个位置，起点位置
       stepDelay: 100, //初始转动速度 0.1s一步
-      stepNum: 100,
+      stepNum: 10,
       IntervalID: "",
       UserBanace: 200, // 存款，默认200
       isTurn: true, // 是否可以抽奖，后续加上余额判断
@@ -183,6 +184,10 @@ export default {
         this.stepDelay = 1000 / this.stepNum;
         this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
+    },
+    restore() {
+      document.getElementById("prize-window").classList.remove("show");
+      document.getElementById("container").classList.remove("hidden");
     },
     async getRaffleRes() {
       const res = await axios({
@@ -421,5 +426,17 @@ img {
 #congrats-text {
   font-family: "Courier New", Courier, monospace;
   font-size: 40px;
+}
+#exit {
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin-top: -600px;
+  margin-left: 50px;
+  position: absolute;
+  font-size: 50px;
+  background-color: transparent;
+  border: transparent;
+  cursor: pointer;
 }
 </style>
