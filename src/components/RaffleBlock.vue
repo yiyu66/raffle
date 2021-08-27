@@ -177,7 +177,7 @@ export default {
           document.getElementById("container").classList.toggle("hidden");
           document.getElementById("prize-window").classList.toggle("show");
         }, 2000);
-        // alert('恭喜你中奖了！') // UI待修改
+        /* TODO: 添加抽奖结果的文本，在 id=final-prize-text 的<p>元素中显示 */
       } else {
         // 逐渐减速
         clearInterval(this.IntervalID);
