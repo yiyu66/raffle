@@ -44,12 +44,7 @@
         <img src="./img/nothing.jpeg" />{{ resultList[7].name }}
       </div>
       <div class="start" id="boxcenter">
-        <el-button
-          class="startButton"
-          id="startButton"
-          @click="rotateWheel"
-          round
-        >
+        <el-button class="startButton" id="startButton" @click="start" round>
           <p>抽奖</p>
           <p>10/次</p></el-button
         >
@@ -66,6 +61,10 @@
       <div class="box" id="box4">
         <img src="./img/fracture-case.jpeg" />{{ resultList[4].name }}
       </div>
+    </div>
+    <div class="prize-window">
+      <p>恭喜你，你获得了</p>
+      <p id="prize-text"></p>
     </div>
   </div>
 </template>
@@ -126,92 +125,95 @@ export default {
       // 后端返回的抽奖结果
       raffle: {
         winNum: 2,
+        winPrizeName: "",
       },
       index: 0, //当前转动到哪个位置，起点位置
       stepDelay: 100, //初始转动速度 0.1s一步
-      stepNum: 0,
+      stepNum: 100,
       IntervalID: "",
       UserBanace: 200, // 存款，默认200
       isTurn: true, // 是否可以抽奖，后续加上余额判断
-      pointerIndex: -1,
     };
   },
   created() {
     this.getRaffleList();
   },
   methods: {
-    rotateWheel() {
-      timeStamps = buildArray();
-      currentIndex = 0;
-      currentSteps = 1;
-      spin = setInterval(animate, 150);
-      finishedSpin = false;
-      function animate() {
-        if (finishedSpin) {
-          clearInterval(spin);
-        } else if (
-          currentIndex === timeStamps.length - 1 &&
-          currentSteps === timeStamps[currentIndex]
-        ) {
-          finishedSpin = true;
-          prizeText =
-            clockwisePrizes[pointerIndex].getElementsByTagName("p")[0]
-              .innerHTML;
-          prizeImage =
-            clockwisePrizes[pointerIndex].getElementsByTagName("img")[0].src;
-          prizeTextElement = document.getElementById("prize-content");
-          prizeImageElement = document.getElementById("prize-image");
-          prizeWindow = document.getElementsByClassName("prize-window")[0];
-          prizeImageElement.src = prizeImage;
-          prizeTextElement.innerHTML = prizeText;
-          prizeWindow.className = "prize-window show";
-        } else if (currentSteps === timeStamps[currentIndex]) {
-          movePrize();
-          currentIndex++;
-          currentSteps = 1;
-        } else {
-          currentSteps++;
-        }
-      }
-    },
-    getText(prize) {
-      return prize.innerHTML;
-    },
-    reset() {
-      for (i = 0; i < allPrizes.length; i++) {
-        allPrizes[i].className = "prize";
-      }
-      pointerIndex = -1;
-    },
-    movePrize() {
-      if (pointerIndex === -1) {
-        pointerIndex = 0;
+    async start() {
+      //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
+      this.index = 0;
+      this.UserBanace -= 10;
+      document.getElementById("startButton").disabled = true;
+      // await this.getRaffleRes();
+      if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) {
+        // 考虑网络断开的情况
+        this.IntervalID = setInterval(this.rotate, this.stepDelay);
+        document.getElementById("prize-text").innerHTML = this.resultList[this.raffle.winNum].name;
       } else {
-        clockwisePrizes[pointerIndex].className = "prize";
-        pointerIndex++;
+        document.getElementById("startButton").disabled = false;
+        this.UserBanace += 10;
+
+        alert("错误");
       }
-      if (pointerIndex === allPrizes.length) {
-        pointerIndex = 0;
-      }
-      clockwisePrizes[pointerIndex].className = "prize chosen";
     },
-    buildArray() {
-      timeStamps = new Array();
-      let i = 0;
-      let step = 8;
-      let finalPrize = Math.random() * 20;
-      for (i = 0; i < 3; i++) {
-        timeStamps[i] = step;
-        step /= 2;
+    rotate() {
+      // 复原老格子style
+      let boxID = "box" + this.index;
+      let boxOld = document.getElementById(boxID);
+      boxOld.className = "box";
+      if (this.index === 7) {
+        this.index = -1;
       }
-      for (; i < 30 + finalPrize; i++) {
-        timeStamps[i] = 1;
+      // 更新当前格子style
+      boxID = "box" + ++this.index;
+      var boxNow = document.getElementById(boxID);
+      boxNow.className = "boxActived";
+      this.stepNum--;
+      if (this.stepNum === 0) {
+        clearInterval(this.IntervalID);
+        this.index = 0;
+        document.getElementById("startButton").disabled = false;
+
+        // alert('恭喜你中奖了！') // UI待修改
+      } else {
+        // 逐渐减速
+        clearInterval(this.IntervalID);
+        this.stepDelay = 1000 / this.stepNum;
+        this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
-      for (; i < 34 + finalPrize; i++) {
-        timeStamps[i] = step;
-        step *= 2;
-      }
-      return timeStamps;
+      console.log(this.raffle.winPrizeName);
+
+    },
+    async getRaffleRes() {
+      const res = await axios({
+        url: "/PrizeResult",
+        method: "get",
+        responseType: "json",
+      })
+        .then(function (response) {
+          return response.data.Num;
+        })
+        .catch(function (error) {
+          return error;
+        });
+      this.raffle.winNum = res;
+      this.stepNum = 40 + this.raffle.winNum;
+    },
+    async getRaffleList() {
+      const res = await axios({
+        url: "/RaffleList",
+        method: "get",
+        responseType: "json",
+      })
+        .then(function (response) {
+          return response.data.resultList;
+        })
+        .catch(function (error) {
+          console.log("获取奖品列表失败：" + error);
+        });
+      this.resultList = res;
+      // this.PrizeList = res
+      // console.log(this.PrizeList)
     },
   },
 };
@@ -378,5 +380,9 @@ export default {
 img {
   width: 80%;
   height: 60%;
+}
+.prize-window {
+  display: block;
+  background-color: white;
 }
 </style>
