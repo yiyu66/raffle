@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>奖品管理</el-breadcrumb-item>
@@ -31,6 +31,9 @@
         <el-table-column label="操作" width="200px">
           <template v-slot="scope">
             <!--操作按钮  -->
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.name)"
+              >编辑</el-button
+            >
             <el-button
               type="danger"
               icon="el-icon-delete"
@@ -70,6 +73,18 @@
         <el-button type="primary" @click="addprize">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 修改中奖概率对话框 -->
+    <el-dialog title="中奖概率" :visible.sync="editdialogVisible" @close="editDialogClosed" width="50%">
+      <el-form :model="editForm" ref="editFormRef" label-width="70px">
+        <el-form-item label="中奖概率(%)">
+          <el-input v-model="editForm.probability"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editdialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editPrizeInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -82,26 +97,15 @@ export default {
       queryInfo: {
         query: '',
         pagenum: 1,
-        pagesize: 5, // 每页显示多少项
+        pagesize: 5,
       },
       PrizeList: [],
       total: 0,
       addDialogVisible: false,
       PrizeInfo: {},
-      selectedPrizeId: '', // 已选中的id
-      // 添加表单数据
+      selectedPrizeId: '',
       addForm: {},
-      // addFormRules: {
-      //   username: [
-      //     {
-      //       required: true,
-      //       message: '请输入奖品名称',
-      //       trigger: 'blur',
-      //     },
-      //   ],
-      //   password: [{ required: true, message: '请输入奖品图片', trigger: 'blur' }],
-      // },
-      // 查询奖品数据
+      editdialogVisible: false,
       editForm: {},
     }
   },
@@ -194,20 +198,38 @@ export default {
           responseType: 'json',
           data: { id },
         })
-          .then(function (response) {
-            return response
-          })
-          .catch(function (error) {
-            return error
-          })
         console.log(res.data)
       }
 
+      this.getPrizeList()
+    },
+    async showEditDialog(id) {
+      this.editForm.name = id
+      this.editdialogVisible = true
+    },
+    editDialogClosed() {
+      this.$refs.editFormRef.resetFields()
+    },
+    async editPrizeInfo() {
+      const formObj = JSON.stringify(this.editForm)
+      const res = await axios({
+        url: '/updateProbability',
+        method: 'post',
+        responseType: 'json',
+        data: {
+          formObj,
+        },
+      })
+      console.log(res.data);
+      this.editdialogVisible = false
       this.getPrizeList()
     },
   },
 }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
+.container {
+  margin: 30px;
+}
 </style>
