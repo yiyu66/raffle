@@ -2,7 +2,7 @@
   <div class="home">
     <div class="prize-text">幸运抽奖</div>
     <div class="money">当前金币值：{{ UserBanace }}</div>
-    <div class="container">
+    <div class="container" id="container">
       <div class="upper-border">
         <div class="circle corner"></div>
         <div class="circle hollow"></div>
@@ -62,9 +62,10 @@
         <img src="./img/fracture-case.jpeg" />{{ resultList[4].name }}
       </div>
     </div>
-    <div class="prize-window">
-      <p>恭喜你，你获得了</p>
-      <p id="prize-text"></p>
+    <div class="prize-window" id="prize-window">
+      <img src="./img/rich.png" style="width: 300px; height: 300px" />
+      <p id="congrats-text">恭喜你，你获得了</p>
+      <p id="final-prize-text"></p>
     </div>
   </div>
 </template>
@@ -148,11 +149,9 @@ export default {
       if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) {
         // 考虑网络断开的情况
         this.IntervalID = setInterval(this.rotate, this.stepDelay);
-        document.getElementById("prize-text").innerHTML = this.resultList[this.raffle.winNum].name;
       } else {
         document.getElementById("startButton").disabled = false;
         this.UserBanace += 10;
-
         alert("错误");
       }
     },
@@ -173,7 +172,10 @@ export default {
         clearInterval(this.IntervalID);
         this.index = 0;
         document.getElementById("startButton").disabled = false;
-
+        setTimeout(function () {
+          document.getElementById("container").classList.toggle("hidden");
+          document.getElementById("prize-window").classList.toggle("show");
+        }, 2000);
         // alert('恭喜你中奖了！') // UI待修改
       } else {
         // 逐渐减速
@@ -181,8 +183,6 @@ export default {
         this.stepDelay = 1000 / this.stepNum;
         this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
-      console.log(this.raffle.winPrizeName);
-
     },
     async getRaffleRes() {
       const res = await axios({
@@ -343,7 +343,6 @@ export default {
   height: 12px;
   width: 550px;
 }
-
 .left-border {
   transform: translateX(-365px);
   margin-top: 50px;
@@ -382,7 +381,45 @@ img {
   height: 60%;
 }
 .prize-window {
-  display: block;
-  background-color: white;
+  background-color: orange;
+  display: none;
+  width: 760px;
+  height: 760px;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  border-radius: 15%;
+  margin: 30px;
+  box-shadow: inset 0 0 100px lightblue;
+  display: none;
+}
+.prize-window.show {
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+  display: flex;
+  flex-direction: column;
+}
+.container.hidden {
+  display: none;
+}
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+#congrats-text {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 40px;
 }
 </style>
