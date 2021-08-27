@@ -31,28 +31,44 @@
         <div class="circle hollow"></div>
         <div class="circle corner"></div>
       </div>
-      <div class="box" id="box0">{{ resultList[0].name }}</div>
-      <div class="box" id="box1">{{ resultList[1].name }}</div>
-      <div class="box" id="box2">{{ resultList[2].name }}</div>
-      <div class="box" id="box7">{{ resultList[7].name }}</div>
+      <div class="box" id="box0">
+        <img src="./img/ak47-asiimov.jpg" />{{ resultList[0].name }}
+      </div>
+      <div class="box" id="box1">
+        <img src="./img/awp-dragon.jpeg" />{{ resultList[1].name }}
+      </div>
+      <div class="box" id="box2">
+        <img src="./img/m4a4-howl.jpeg" />{{ resultList[2].name }}
+      </div>
+      <div class="box" id="box7">
+        <img src="./img/nothing.jpeg" />{{ resultList[7].name }}
+      </div>
       <div class="start" id="boxcenter">
         <el-button class="startButton" id="startButton" @click="start" round>
           <p>抽奖</p>
           <p>10/次</p></el-button
         >
       </div>
-      <div class="box" id="box3">{{ resultList[3].name }}</div>
-      <div class="box" id="box6">{{ resultList[6].name }}</div>
-      <div class="box" id="box5">{{ resultList[5].name }}</div>
-      <div class="box" id="box4">{{ resultList[4].name }}</div>
+      <div class="box" id="box3">
+        <img src="./img/nothing.jpeg" />{{ resultList[3].name }}
+      </div>
+      <div class="box" id="box6">
+        <img src="./img/pandora-gloves.jpeg" />{{ resultList[6].name }}
+      </div>
+      <div class="box" id="box5">
+        <img src="./img/m9-doppler.jpeg" />{{ resultList[5].name }}
+      </div>
+      <div class="box" id="box4">
+        <img src="./img/fracture-case.jpeg" />{{ resultList[4].name }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
-  name: 'RaffleBlock',
+  name: "RaffleBlock",
   props: {
     msg: String,
     prizesList: String,
@@ -62,137 +78,138 @@ export default {
       // 先在本地预制一个奖品列表
       resultList: [
         {
-          name: '奖品1',
+          name: "AK47 | 二西莫夫",
           order: 1, // 顺序
-          probability: 12.5,
+          probability: 0.1,
         },
         {
-          name: '奖品1',
+          name: "AWP | 巨龙传说",
           order: 2,
-          probability: 12.5,
+          probability: 0.05,
         },
         {
-          name: '奖品1',
+          name: "M4A4 | 咆哮",
           order: 3,
-          probability: 12.5,
+          probability: 0.03,
         },
         {
-          name: '奖品1',
+          name: "给你点个赞",
           order: 4,
-          probability: 12.5,
+          probability: 40,
         },
         {
-          name: '奖品1',
+          name: "棱彩武器箱",
           order: 5,
-          probability: 12.5,
+          probability: 40,
         },
         {
-          name: '奖品1',
+          name: "M9刺刀 | 多普勒",
           order: 6,
-          probability: 12.5,
+          probability: 0.01,
         },
         {
-          name: '奖品1',
+          name: "运动手套 | 潘多拉魔盒",
           order: 7,
-          probability: 12.5,
+          probability: 0.01,
         },
         {
-          name: '奖品1',
+          name: "给你点个赞",
           order: 8,
-          probability: 12.5,
+          probability: 19.8,
         },
       ],
       // 后端返回的抽奖结果
       raffle: {
-        winNum: -1,
+        winNum: 2,
       },
       index: 0, //当前转动到哪个位置，起点位置
       stepDelay: 100, //初始转动速度 0.1s一步
       stepNum: 0,
-      IntervalID: '',
+      IntervalID: "",
       UserBanace: 200, // 存款，默认200
       isTurn: true, // 是否可以抽奖，后续加上余额判断
-    }
+    };
   },
   created() {
-    this.getRaffleList()
+    this.getRaffleList();
   },
   methods: {
     async start() {
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
-      this.index = 0
-      this.UserBanace -= 10
-      document.getElementById('startButton').disabled = true
-      await this.getRaffleRes()
+      this.index = 0;
+      this.UserBanace -= 10;
+      document.getElementById("startButton").disabled = true;
+      await this.getRaffleRes();
       if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) {
         // 考虑网络断开的情况
-        this.IntervalID = setInterval(this.rotate, this.stepDelay)
-        console.log(this.raffle.winNum)
+        this.IntervalID = setInterval(this.rotate, this.stepDelay);
+        console.log(this.raffle.winNum);
       } else {
-        document.getElementById('startButton').disabled = false
-        this.UserBanace += 10
-        alert('错误')
+        document.getElementById("startButton").disabled = false;
+        this.UserBanace += 10;
+
+        alert("错误");
       }
     },
     rotate() {
       // 复原老格子style
-      let boxID = 'box' + this.index
-      let boxOld = document.getElementById(boxID)
-      boxOld.className = 'box'
+      let boxID = "box" + this.index;
+      let boxOld = document.getElementById(boxID);
+      boxOld.className = "box";
       if (this.index === 7) {
-        this.index = -1
+        this.index = -1;
       }
       // 更新当前格子style
-      boxID = 'box' + ++this.index
-      var boxNow = document.getElementById(boxID)
-      boxNow.className = 'boxActived'
-      this.stepNum--
+      boxID = "box" + ++this.index;
+      var boxNow = document.getElementById(boxID);
+      boxNow.className = "boxActived";
+      this.stepNum--;
       if (this.stepNum === 0) {
-        clearInterval(this.IntervalID)
-        this.index = 0
-        document.getElementById('startButton').disabled = false
-        
+        clearInterval(this.IntervalID);
+        this.index = 0;
+        document.getElementById("startButton").disabled = false;
+
         // alert('恭喜你中奖了！') // UI待修改
       } else {
         // 逐渐减速
-        clearInterval(this.IntervalID)
-        this.stepDelay = 1000 / this.stepNum
-        this.IntervalID = setInterval(this.rotate, this.stepDelay)
+        clearInterval(this.IntervalID);
+        this.stepDelay = 1000 / this.stepNum;
+        this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
     },
     async getRaffleRes() {
       const res = await axios({
-        url: '/PrizeResult',
-        method: 'get',
-        responseType: 'json',
+        url: "/PrizeResult",
+        method: "get",
+        responseType: "json",
       })
         .then(function (response) {
-          return response.data.Num
+          return response.data.Num;
         })
         .catch(function (error) {
-          return error
-        })
-      this.raffle.winNum = res
-      this.stepNum = 40 + this.raffle.winNum
+          return error;
+        });
+      this.raffle.winNum = res;
+      this.stepNum = 40 + this.raffle.winNum;
     },
     async getRaffleList() {
       const res = await axios({
-        url: '/RaffleList',
-        method: 'get',
-        responseType: 'json',
+        url: "/RaffleList",
+        method: "get",
+        responseType: "json",
       })
         .then(function (response) {
-          return response.data.resultList
+          return response.data.resultList;
         })
         .catch(function (error) {
-          console.log('获取奖品列表失败：' + error)
-        })
-      this.resultList = res
+          console.log("获取奖品列表失败：" + error);
+        });
+      this.resultList = res;
       // this.PrizeList = res
       // console.log(this.PrizeList)
     },
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -236,6 +253,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   border-radius: 30px;
   /* margin: 0%; */
   /* margin: 5.33px; */
@@ -351,5 +369,9 @@ export default {
 }
 .center {
   background-color: white;
+}
+img {
+  width: 80%;
+  height: 60%;
 }
 </style>
