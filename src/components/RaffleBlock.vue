@@ -32,8 +32,20 @@
         <div class="circle corner"></div>
       </div>
       <div class="customer-container">
-        <div class="box" v-for="item in resultList" :key="item.id">
-          <img :src="item.prizeimage" alt="" />{{ item.name }}
+        <div
+          class="box"
+          :id="'box' + item.order"
+          v-for="item in resultList"
+          :key="item.id"
+        >
+          <template v-if="item.name === '抽奖'">
+            <el-button id="startButton" class="startButton" @click="start" round
+              >抽奖</el-button
+            >
+          </template>
+          <template v-else>
+            <img :src="item.prizeimage" alt="" />{{ item.name }}
+          </template>
         </div>
       </div>
     </div>
@@ -56,8 +68,8 @@ export default {
       raffle: {
         winNum: 0,
       },
-      index: 0, //当前转动到哪个位置，起点位置
-      stepDelay: 100, //初始转动速度 0.1s一步
+      index: 1, //当前转动到哪个位置，起点位置
+      stepDelay: 1000, //初始转动速度 0.1s一步
       stepNum: 0,
       IntervalID: "",
       UserBanace: 200, // 存款，默认200
@@ -70,8 +82,9 @@ export default {
 
   methods: {
     async start() {
-      this.index = 0;
-      debugger;
+      let ele = document.getElementById("box" + this.index);
+      ele.className = "box";
+      this.index = 1;
       this.UserBanace -= 10;
       document.getElementById("startButton").disabled = true;
       await this.getRaffleRes();
@@ -90,8 +103,8 @@ export default {
       let boxID = "box" + this.index;
       let boxOld = document.getElementById(boxID);
       boxOld.className = "box";
-      if (this.index === 7) {
-        this.index = -1;
+      if (this.index === 8) {
+        this.index = 0;
       }
       // 更新当前格子style
       boxID = "box" + ++this.index;
@@ -99,9 +112,8 @@ export default {
       boxNow.className = "boxActived";
       this.stepNum--;
       if (this.stepNum === 0) {
-        clearInterval(this.IntervalID);
-        this.index = 0;
         document.getElementById("startButton").disabled = false;
+        clearInterval(this.IntervalID);
       } else {
         // 逐渐减速
         clearInterval(this.IntervalID);
@@ -109,14 +121,6 @@ export default {
         this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
     },
-
-    // const element = document.querySelector(".box:nth-child(5)");
-    //     element.setAttribute("id", "target");
-    //     var MyComponent = Vue.extend({
-    //       template:
-    //         '<div class="start" id="boxcenter"><el-button class="startButton" id="startButton" @click="start" round><p>抽奖</p><p>10/次</p></el-button></div>',
-    //     });
-    //     new MyComponent().$mount().$appendTo("#target"); //appendTo
 
     // 抽奖
     async getRaffleRes() {
@@ -132,14 +136,12 @@ export default {
 
     //初始化抽奖盘
     async getRaffleList() {
-      // debugger;
       const res = await axios({
         url: "RaffleList",
         method: "get",
         responseType: "json",
       });
       const resultList = res.data.data.resultList;
-      console.log(resultList);
       if (resultList === null) {
         console.log("获取奖品列表失败：" + error);
       } else {
