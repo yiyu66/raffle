@@ -134,7 +134,48 @@ export default {
     this.getRaffleList();
   },
   methods: {
+    // 获取用户余额
+    async getUserBanace() {
+      const res = await axios({
+        url: '/getUserBanace',
+        method: 'get', // 可以改
+        responseType: 'json'
+      })
+      .then(function(res){
+        return res.data.UserBanace
+      })
+      .catch(function(err){
+        console.log('获取用户余额失败')
+        // 应该加个提示框在这里是不是会好一点
+      })
+      this.UserBanace = res
+    },
+    async setUserBanace() {
+      const res = await axios({
+        url: '/setUserBanace',
+        method: 'get', // 可以改
+        responseType: 'json',
+        data:{
+          UserBanace:this.UserBanace
+        }
+      })
+      .then(function(res){
+        return res.data.UserBanace
+      })
+      .catch(function(err){
+        console.log('上传用户余额失败')
+        // 应该加个提示框在这里是不是会好一点
+      })
+      this.UserBanace = res
+    },
     async start() {
+      // 点击按钮检测用户余额是否充足
+      await this.getUserBanace()
+      // 我看下面-10，好像是十块钱一次
+      if(this.UserBanace < 10){
+        // 此处应弹出提示框，并且终止进行下去。
+        return 
+      }
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
       this.index = 0;
       this.UserBanace -= 10;
@@ -150,6 +191,8 @@ export default {
 
         alert("错误");
       }
+       // 每次抽奖结束上传用户余额
+      await this.setUserBanace()
     },
     rotate() {
       // 复原老格子style
