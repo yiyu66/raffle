@@ -13,6 +13,12 @@
             <el-button slot="append" icon="el-icon-search" @click="getPrizeList"></el-button>
           </el-input>
         </el-col>
+
+        <el-col :span="4">
+          <el-input placeholder="设置初始矿石数" v-model="initialMoney">
+            <el-button slot="append" @click="setInitialMoney(initialMoney)">确定</el-button>
+          </el-input>
+        </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="addDialogVisible = true">添加奖品</el-button>
         </el-col>
@@ -99,6 +105,7 @@ export default {
         pagenum: 1,
         pagesize: 5,
       },
+      initialMoney:'',
       PrizeList: [],
       total: 0,
       addDialogVisible: false,
@@ -116,18 +123,13 @@ export default {
     // 更新奖品列表
     async getPrizeList() {
       const res = await axios({
-        url: '/PrizeList',
+        url: '/RaffleList', // 暂时共用一个接口
         method: 'get',
         responseType: 'json',
-      })
-        .then(function (response) {
-          return response.data.resultList
-        })
-        .catch(function (error) {
+      }).catch(function (error) {
           console.log('获取奖品列表失败')
         })
-      this.PrizeList = res
-      // console.log(this.PrizeList)
+      this.PrizeList = res.data.RaffleList.resultList
     },
     // 翻页功能函数
     handleSizeChange(newpageSize) {
@@ -203,6 +205,16 @@ export default {
 
       this.getPrizeList()
     },
+    async setInitialMoney(initialMoney) {
+        const res = await axios({
+          url: '/setInitialMoney',
+          method: 'post',
+          responseType: 'json',
+          data: { initialMoney },
+        })
+        console.log(res.data)
+    },
+
     async showEditDialog(id) {
       this.editForm.name = id
       this.editdialogVisible = true
@@ -220,7 +232,7 @@ export default {
           formObj,
         },
       })
-      console.log(res.data);
+      console.log(res.data)
       this.editdialogVisible = false
       this.getPrizeList()
     },
