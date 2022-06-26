@@ -51,8 +51,8 @@
         <div class="start" id="boxcenter">
           <el-button class="startButton" id="startButton" @click="start" round>
             <p>抽奖</p>
-            <p>40/次</p></el-button
-          >
+            <p>40/次</p>
+          </el-button>
         </div>
         <div class="box" id="box3">
           <img src="../components/img/switch.png" />
@@ -83,18 +83,19 @@
     </div>
     <div class="historyListBox">
       <ul class="historyListClass">
-        <li v-for="item in historyList" v-bind:key="item.prizename">
-          恭喜 {{ item.username }} 抽中了奖品 {{ item.prizename }} {{ item.time }}
-        </li>
+        <li
+          v-for="item in historyList"
+          v-bind:key="item.prizename"
+        >恭喜 {{ item.username }} 抽中了奖品 {{ item.prizename }} {{ item.time }}</li>
       </ul>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 export default {
-  name: 'RaffleBlock',
+  name: "RaffleBlock",
   props: {
     msg: String,
     prizesList: String,
@@ -104,52 +105,52 @@ export default {
       // 先在本地预制一个奖品列表
       resultList: [
         {
-          name: '66矿石',
+          name: "66矿石",
           order: 1,
           probability: 12.5,
-          prizeimage: '待添加 ',
+          prizeimage: "待添加 ",
         },
         {
-          name: '随机限量徽章',
+          name: "随机限量徽章",
           order: 2,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: '掘金T恤',
+          name: "掘金T恤",
           order: 2,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: 'switch',
+          name: "switch",
           order: 3,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: 'bug',
+          name: "bug",
           order: 4,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: '掘金马克杯',
+          name: "掘金马克杯",
           order: 5,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: 'yoyo抱枕',
+          name: "yoyo抱枕",
           order: 6,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         {
-          name: '乐高海洋巨轮',
+          name: "乐高海洋巨轮",
           order: 7,
           probability: 12.5,
-          prizeimage: '待添加',
+          prizeimage: "待添加",
         },
         // {
         //   name: 'AK47 | 二西莫夫',
@@ -194,137 +195,182 @@ export default {
       ],
       // 后端返回的抽奖结果
       raffle: {
-        prizename: '',
+        prizename: "",
         winNum: 0,
       },
       historyList: {},
       index: 0, //当前转动到哪个位置，起点位置
       stepDelay: 100, //初始转动速度 0.1s一步
       stepNum: 0,
-      IntervalID: '',
-      UserBanace: '读取中。。。',
+      IntervalID: "",
+      UserBanace: "读取中。。。",
       dialogVisible: false,
-    }
+    };
   },
   created() {
-    this.getRaffleList()
-    this.getUserBanace()
-    this.getHistoryList()
+    this.getRaffleList();
+    this.getUserBanace();
+    this.getHistoryList();
   },
   methods: {
     // 获取用户余额
     async getUserBanace() {
       const res = await axios({
-        url: '/getUserBanace',
-        method: 'get',
-        responseType: 'json',
+        url: "/getUserBanace",
+        method: "get",
+        responseType: "json",
       }).catch(function (err) {
-        console.log('获取用户余额失败')
-      })
-      this.UserBanace = res.data.UserBanace
+        console.log("获取用户余额失败");
+      });
+      this.UserBanace = res.data.UserBanace;
     },
     // 更新用户余额
     async setUserBanace() {
       const res = await axios({
-        url: '/setUserBanace',
-        method: 'post',
-        responseType: 'json',
+        url: "/setUserBanace",
+        method: "post",
+        responseType: "json",
         data: {
           UserBanace: this.UserBanace,
         },
       }).catch(function (err) {
-        console.log('上传用户余额失败')
-      })
-      this.UserBanace = res.data.UserBanace
+        console.log("上传用户余额失败");
+      });
+      this.UserBanace = res.data.UserBanace;
     },
 
     async start() {
       // 点击按钮检测用户余额是否充足
-      await this.getUserBanace()
+      await this.getUserBanace();
       if (this.UserBanace < 10) {
-        alert('余额不足')
-        return
+        alert("余额不足");
+        return;
       }
-      this.setUserBanace()
+      this.setUserBanace();
       //this.stepNum = 40 + Math.ceil(Math.random() * 10) // 前端测试用JS模拟，抽奖结果由后端给出
-      this.index = 0
-      document.getElementById('startButton').disabled = true
-      await this.getRaffleRes()
+      this.index = 0;
+      document.getElementById("startButton").disabled = true;
+      await this.getRaffleRes();
       if (this.raffle.winNum >= 0 && this.raffle.winNum <= 7) {
         // 考虑网络断开的情况
-        this.IntervalID = setInterval(this.rotate, this.stepDelay)
-        console.log(this.raffle.winNum)
+        // this.IntervalID = setInterval(this.rotate, this.stepDelay);
+        requestAnimationFrame(this.rotateRAF);
       } else {
-        document.getElementById('startButton').disabled = false
-        this.UserBanace += 10
-        alert('抽奖结果获取错误')
+        document.getElementById("startButton").disabled = false;
+        this.UserBanace += 10;
+        alert("抽奖结果获取错误");
       }
     },
     rotate() {
       // 复原老格子style
-      let boxID = 'box' + this.index
-      let boxOld = document.getElementById(boxID)
-      boxOld.className = 'box'
+      let boxID = "box" + this.index;
+      let boxOld = document.getElementById(boxID);
+      boxOld.className = "box";
       if (this.index === 7) {
-        this.index = -1
+        this.index = -1;
       }
       // 更新当前格子style
-      boxID = 'box' + ++this.index
-      var boxNow = document.getElementById(boxID)
-      boxNow.className = 'boxActived'
-      this.stepNum--
+      boxID = "box" + ++this.index;
+      var boxNow = document.getElementById(boxID);
+      boxNow.className = "boxActived";
+      this.stepNum--;
       if (this.stepNum === 0) {
-        clearInterval(this.IntervalID)
-        this.index = 0
-        document.getElementById('startButton').disabled = false
-        this.dialogVisible = true
-        this.getHistoryList()
+        clearInterval(this.IntervalID);
+        this.index = 0;
+        document.getElementById("startButton").disabled = false;
+        this.dialogVisible = true;
+        this.getHistoryList();
       } else {
-        clearInterval(this.IntervalID)
-        this.stepDelay = 1000 / this.stepNum
-        this.IntervalID = setInterval(this.rotate, this.stepDelay)
+        clearInterval(this.IntervalID);
+        this.stepDelay = 1000 / this.stepNum;
+        this.IntervalID = setInterval(this.rotate, this.stepDelay);
       }
     },
     // 获取抽奖结果
     async getRaffleRes() {
       const res = await axios({
-        url: '/PrizeResult',
-        method: 'get',
-        responseType: 'json',
+        url: "/PrizeResult",
+        method: "get",
+        responseType: "json",
       }).catch(function (error) {
-        return error
-      })
-      console.log(res)
-      this.raffle.winNum = res.data.order
-      this.raffle.prizename = res.data.name
-      this.stepNum = 40 + this.raffle.winNum
+        return error;
+      });
+      console.log(res);
+      this.raffle.winNum = res.data.order;
+      this.raffle.prizename = res.data.name;
+      this.stepNum = 40 + this.raffle.winNum;
+    },
+    rotateRAF() {
+      // 复原老格子style
+      let boxID = "box" + this.index;
+      let boxOld = document.getElementById(boxID);
+      boxOld.className = "box";
+      if (this.index === 7) {
+        this.index = -1;
+      }
+      // 更新当前格子style
+      boxID = "box" + ++this.index;
+      var boxNow = document.getElementById(boxID);
+      boxNow.className = "boxActived";
+      this.stepNum--;
+      if (this.stepNum === 0) {
+        // clearInterval(this.IntervalID);
+        this.index = 0;
+        document.getElementById("startButton").disabled = false;
+        this.dialogVisible = true;
+        this.getHistoryList();
+      } else {
+        // clearInterval(this.IntervalID);
+        this.stepDelay = 1000 / this.stepNum;
+        this.IntervalID = RAFsetInterval(this.rotate, this.stepDelay);
+      }
+    },
+    RAFsetInterval(cb, interval) {
+      // 實現setInterval功能
+      let now = Date.now;
+      let stime = now();
+      let etime = stime;
+      let loop = () => {
+        this.intervalTimer = requestAnimationFrame(loop);
+        etime = now();
+        if (etime - stime >= interval) {
+          stime = now();
+          etime = stime;
+          cb();
+        }
+      };
+      this.intervalTimer = requestAnimationFrame(loop);
+      return this.intervalTimer;
+    },
+    RAFclearInterval() {
+      cancelAnimationFrame(this.intervalTimer);
     },
     // 获取历史抽奖数据
     async getHistoryList() {
       const res = await axios({
-        url: '/HistoryList',
-        method: 'get',
-        responseType: 'json',
+        url: "/HistoryList",
+        method: "get",
+        responseType: "json",
       }).catch(function (error) {
-        return error
-      })
-      this.historyList = res.data.historyList.historyList
+        return error;
+      });
+      this.historyList = res.data.historyList.historyList;
     },
 
     // 获取抽奖列表
     async getRaffleList() {
       const res = await axios({
-        url: '/RaffleList',
-        method: 'get',
-        responseType: 'json',
+        url: "/RaffleList",
+        method: "get",
+        responseType: "json",
       }).catch(function (error) {
-        console.log('获取奖品列表失败：' + error)
-      })
-      this.resultList = res.data.RaffleList.resultList
-      console.log(this.resultList)
+        console.log("获取奖品列表失败：" + error);
+      });
+      this.resultList = res.data.RaffleList.resultList;
+      console.log(this.resultList);
     },
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
